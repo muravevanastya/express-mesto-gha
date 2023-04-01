@@ -2,25 +2,39 @@ const Card = require('../models/card');
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
-    .populate('user')
     .then((cards) => res.send({ cards }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  // console.log(req.user._id);
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -30,7 +44,15 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -40,5 +62,13 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: 'Карточка с таким id не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
