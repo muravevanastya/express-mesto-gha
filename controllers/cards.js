@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ card }))
     .catch((err) => {
-      if (err.statusCode === 400) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -46,9 +46,9 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => res.send({ card }))
     .catch((err) => {
-      if (err.statusCode === 400) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.statusCode === 404) {
+      } else if (err.name === 'CastError') {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -64,9 +64,9 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.send({ card }))
     .catch((err) => {
-      if (err.statusCode === 400) {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.statusCode === 404) {
+      } else if (err.name === 'CastError') {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
