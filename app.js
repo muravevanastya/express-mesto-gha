@@ -21,17 +21,15 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use((req, res, next) => {
-  next(new Error('Адреса по вашему запросу не существует'));
+app.use((req, res) => {
+  res.status(404).send('Адреса по вашему запросу не существует');
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'На сервере произошла ошибка'
-      : message,
-  });
+  const errorMessage = (statusCode === 500) ? 'На сервере произошла ошибка' : message;
+  res.status(statusCode).send({ message: errorMessage });
+  next();
 });
 
 app.listen(PORT);
