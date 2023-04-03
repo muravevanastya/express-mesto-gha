@@ -22,13 +22,9 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res, next) => {
-  const error = new Error('Not Found');
-  error.status = 404;
+  const error = new Error('Not found');
+  error.status = 400;
   next(error);
-});
-app.use((error, req, res) => {
-  res.status(error.status || 500);
-  res.send({ message: 'На сервере произошла ошибка' });
 });
 
 app.listen(PORT);

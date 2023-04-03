@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (card === null) {
+      if (card.owner.toString() !== req.user._id) {
         res.status(404).send({ message: 'Карточка с таким id не найдена' });
       }
       return res.status(200).send(card);
