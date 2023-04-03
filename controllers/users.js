@@ -15,7 +15,13 @@ module.exports.getAllUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send({ user }))
+    .then((user) => {
+      if (user) {
+        res.status(200).send(user);
+      } else {
+        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
