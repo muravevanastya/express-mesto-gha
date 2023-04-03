@@ -21,8 +21,8 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', () => {
-  throw new Error('По указанному url ничего нет');
+app.use((req, res, next) => {
+  next(new Error('Адреса по вашему запросу не существует'));
 });
 
 app.use((err, req, res, next) => {
