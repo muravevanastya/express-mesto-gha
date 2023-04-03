@@ -22,7 +22,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.status(404).send('Адреса по вашему запросу не существует');
+  res.status(404).send({ message: 'Адреса по вашему запросу не существует' });
 });
 
 app.use((err, req, res, next) => {
