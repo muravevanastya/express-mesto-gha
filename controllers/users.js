@@ -49,14 +49,13 @@ module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail(() => res.status(404).send({ message: 'Пользователь с таким id не найден' }))
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'ReferenceError') {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      } else if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
@@ -64,14 +63,13 @@ module.exports.updateUserProfile = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .orFail(() => res.status(404).send({ message: 'Пользователь с таким id не найден' }))
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'ReferenceError') {
-        res.status(500).send({ message: 'Произошла ошибка' });
-      } else if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
+        res.status(500).send({ message: 'Произошла ошибка' });
       }
     });
 };
