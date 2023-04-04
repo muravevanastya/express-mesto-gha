@@ -4,7 +4,7 @@ module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ users }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -18,8 +18,9 @@ module.exports.getUserById = (req, res) => {
     .then((user) => {
       if (user === null) {
         res.status(404).send({ message: 'Пользователь с таким id не найден' });
+      } else {
+        res.status(200).send(user);
       }
-      return res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -50,12 +51,12 @@ module.exports.updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
-      } else {
+      if (err.name === 'ReferenceError') {
         res.status(500).send({ message: 'Произошла ошибка' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(404).send({ message: 'Пользователь с таким id не найден' });
       }
     });
 };
@@ -63,14 +64,14 @@ module.exports.updateUserProfile = (req, res) => {
 module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((link) => res.send({ link }))
+    .then((user) => res.send({ user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь с таким id не найден' });
-      } else {
+      if (err.name === 'ReferenceError') {
         res.status(500).send({ message: 'Произошла ошибка' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(404).send({ message: 'Пользователь с таким id не найден' });
       }
     });
 };
