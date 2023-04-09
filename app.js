@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -23,8 +24,8 @@ app.use((req, res, next) => {
 
 app.post('/signin', login);
 app.post('/signup', createUser);
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 app.use('*', (req, res) => {
   res.status(404).send({ message: 'Адреса по вашему запросу не существует' });
