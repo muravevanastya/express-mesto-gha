@@ -27,7 +27,6 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
-    // .populate(['owner', 'likes'])
     .orFail(() => {
       throw new NotFound('Карточка с таким id не найдена');
     })
