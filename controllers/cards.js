@@ -28,15 +28,11 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
     // .populate(['owner', 'likes'])
-    .then((card) => {
-      if (card === null) {
-        throw new NotFound('Карточка с таким id не найдена');
-      } else {
-        res.status(200).send(card);
-      }
+    .orFail(() => {
+      throw new NotFound('Карточка с таким id не найдена');
     })
     .then((card) => {
-      if (card.owner._id.toString() === req.user._id) {
+      if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(cardId)
           .then((cardData) => res.send(cardData));
       } else {
