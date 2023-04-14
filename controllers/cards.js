@@ -27,7 +27,7 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findById(cardId)
-    .populate(['owner', 'likes'])
+    // .populate(['owner', 'likes'])
     .then((card) => {
       if (card === null) {
         throw new NotFound('Карточка с таким id не найдена');
@@ -36,12 +36,13 @@ module.exports.deleteCard = (req, res, next) => {
       }
     })
     .then((card) => {
-      if (card.owner._id.toString() !== req.user._id) {
+      if (card.owner._id.toString() === req.user._id) {
+        Card.findByIdAndRemove(cardId)
+          .then((cardData) => res.send(cardData));
+      } else {
         throw new Forbidden('Недостаточно прав');
       }
-      return Card.deleteOne(card);
     })
-    .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequest('Переданы некорректные данные'));
