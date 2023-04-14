@@ -33,7 +33,8 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(cardId)
-          .then((cardData) => res.send(cardData));
+          .then((cardData) => res.send(cardData))
+          .catch(next);
       } else {
         throw new Forbidden('Недостаточно прав');
       }
