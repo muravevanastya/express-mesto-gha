@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const NotFound = require('./errors/NotFound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -15,12 +16,16 @@ app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use(requestLogger);
+
 app.use('/', require('./routes/auth'));
 
 app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use(errorLogger);
 
 app.use(errors());
 
